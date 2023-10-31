@@ -19,6 +19,7 @@ use tokio::sync::mpsc::{channel, Receiver, Sender};
 use super::{Backend, Observer};
 use crate::{status_is_ok, RequestOptions};
 
+#[cfg(feature = "backend-tokio-dtls")]
 mod dtls;
 mod udp;
 
@@ -226,14 +227,17 @@ impl Tokio {
         resource: String,
         opts: RequestOptions,
     ) -> Result<(u32, Receiver<Packet>), Error> {
-
         // Create response channel
         let (tx, mut rx) = channel(10);
 
         // Create token
         let token = rand::random::<u32>();
 
-        debug!("Setup observe for resource: {} (token: {:02x?})", resource, token.to_le_bytes());
+        debug!(
+            "Setup observe for resource: {} (token: {:02x?})",
+            resource,
+            token.to_le_bytes()
+        );
 
         // Register handler
         if let Err(e) = ctl_tx.send(Ctl::Register(token, tx.clone())).await {

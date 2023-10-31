@@ -9,10 +9,11 @@ license = "MPL-2.0"
 edition = "2018"
 
 [features]
-backend-tokio = [ "tokio", "openssl", "tokio-openssl" ]
+backend-tokio = [ "tokio" ]
+backend-tokio-dtls = [ "backend-tokio", "openssl", "tokio-openssl" ]
 
 util = [ "simplelog", "backend-tokio", "anyhow", "hex" ]
-default = [ "backend-tokio", "util" ]
+default = [ "backend-tokio-dtls", "util" ]
 
 [dependencies]
 

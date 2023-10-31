@@ -255,7 +255,13 @@ impl TokioClient {
         // Create appropriate transport
         let transport = match &peer.scheme {
             Transport::Udp => backend::Tokio::new_udp(&connect_str).await?,
+            #[cfg(feature = "backend-tokio-dtls")]
             Transport::Dtls => backend::Tokio::new_dtls(&connect_str, opts).await?,
+            #[cfg(not(feature = "backend-tokio-dtls"))]
+            Transport::Dtls => {
+                error!("Feature \"backend-tokio-dtls\" is not enabled");
+                unimplemented!()
+            }
             _ => {
                 error!("Transport '{}' not yet implemented", peer.scheme);
                 unimplemented!()
